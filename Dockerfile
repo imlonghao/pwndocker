@@ -81,8 +81,7 @@ RUN git clone https://github.com/matrix1001/welpwn && \
 RUN git clone https://github.com/lieanu/LibcSearcher && \
     cd LibcSearcher && python setup.py develop
 
-RUN git clone https://github.com/matrix1001/heapinspect && \
-    cd heapinspect && python setup.py install
+RUN git clone https://github.com/matrix1001/heapinspect
 
 WORKDIR /ctf/work/
 
