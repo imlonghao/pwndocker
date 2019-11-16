@@ -1,7 +1,4 @@
-FROM phusion/baseimage:master-amd64
-MAINTAINER skysider <skysider@163.com>
-
-COPY sources.list /etc/apt/sources.list
+FROM ubuntu:16.04
 
 RUN dpkg --add-architecture i386 && \
     apt-get -y update && \
@@ -37,7 +34,6 @@ RUN dpkg --add-architecture i386 && \
     patchelf \
     gawk \
     file \
-    python3-distutils \
     bison --fix-missing && \
     rm -rf /var/lib/apt/list/*
 
@@ -48,8 +44,6 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
 
 RUN python3 -m pip install -U pip && \
     python3 -m pip install --no-cache-dir \
-    -i https://pypi.doubanio.com/simple/  \
-    --trusted-host pypi.doubanio.com \
     ropper \
     unicorn \
     keystone-engine \
@@ -58,8 +52,6 @@ RUN python3 -m pip install -U pip && \
 
 RUN pip install --upgrade setuptools && \
     pip install --no-cache-dir \
-    -i https://pypi.doubanio.com/simple/  \
-    --trusted-host pypi.doubanio.com \
     ropgadget \
     pwntools \
     zio \
@@ -73,8 +65,6 @@ RUN wget https://raw.githubusercontent.com/inaz2/roputils/master/roputils.py && 
 
 RUN gem install one_gadget seccomp-tools && rm -rf /var/lib/gems/2.*/cache/*
 
-COPY pip.conf /root/.pip/pip.conf
-
 RUN git clone https://github.com/pwndbg/pwndbg && \
     cd pwndbg && chmod +x setup.sh && ./setup.sh
 
@@ -84,6 +74,15 @@ RUN git clone https://github.com/scwuaptx/Pwngdb.git /root/Pwngdb && \
 
 RUN git clone https://github.com/niklasb/libc-database.git libc-database && \
     cd libc-database && ./get || echo "/libc-database/" > ~/.libcdb_path
+
+RUN git clone https://github.com/matrix1001/welpwn && \
+    cd welpwn && python setup.py install
+
+RUN git clone https://github.com/lieanu/LibcSearcher && \
+    cd LibcSearcher && python setup.py develop
+
+RUN git clone https://github.com/matrix1001/heapinspect && \
+    cd heapinspect && python setup.py install
 
 WORKDIR /ctf/work/
 
@@ -104,6 +103,4 @@ COPY --from=skysider/glibc_builder32:2.29 /glibc/2.29/32 /glibc/2.29/32
 
 COPY linux_server linux_server64  /ctf/
 
-RUN chmod a+x /ctf/linux_server /ctf/linux_server64
-
-CMD ["/sbin/my_init"]
+CMD ["sleep", "infinity"]
